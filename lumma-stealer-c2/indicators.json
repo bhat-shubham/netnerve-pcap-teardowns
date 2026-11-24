@@ -1,0 +1,198 @@
+{
+  "slug": "lumma-stealer-c2",
+  "title": "Lumma Stealer C2 PCAP Analysis: futupath.cyou Beaconing, MEGA Staging and Command Injection",
+  "source_url": "https://www.malware-traffic-analysis.net/2026/08/10/index.html",
+  "suricata": [
+    {
+      "sid": 2071487,
+      "msg": "ET MALWARE Win32/Lumma Stealer Related CnC Domain in DNS Lookup (futupath .cyou)",
+      "count": 9,
+      "first_seen": "+394.56s (Frame 8650)",
+      "flow": "172.16.1.101:60077 → 172.16.1.1:53"
+    },
+    {
+      "sid": 2400009,
+      "msg": "ET DROP Spamhaus DROP Listed Traffic Inbound group 10",
+      "count": 1,
+      "first_seen": "+395.32s (Frame 8659)",
+      "flow": "64.89.161.173:80 → 172.16.1.101:54239"
+    },
+    {
+      "sid": 2039584,
+      "msg": "ET FILE_SHARING Observed DNS Query to Filesharing Service (mega .co .nz)",
+      "count": 5,
+      "first_seen": "+47.91s (Frame 2220)",
+      "flow": "172.16.1.101:58293 → 172.16.1.1:53"
+    },
+    {
+      "sid": 2049344,
+      "msg": "ET FILE_SHARING File Sharing Related Domain in DNS Lookup (mega .nz)",
+      "count": 2,
+      "first_seen": "+44.73s (Frame 2087)",
+      "flow": "172.16.1.101:62730 → 172.16.1.1:53"
+    },
+    {
+      "sid": 2049372,
+      "msg": "ET FILE_SHARING File Sharing Domain Observed in TLS SNI (mega .nz)",
+      "count": 2,
+      "first_seen": "+45.56s (Frame 2100)",
+      "flow": "172.16.1.101:54167 → 31.216.144.5:443"
+    },
+    {
+      "sid": 1000030,
+      "msg": "NetNerve Command Injection: Shell Execution command",
+      "count": 1,
+      "first_seen": "+419.50s (Frame 9019)",
+      "flow": "172.16.1.101:54254 → 64.89.161.173:80"
+    },
+    {
+      "sid": 3000001,
+      "msg": "NetNerve Protocol Validation: SYN-FIN Detected",
+      "count": 1,
+      "first_seen": "+43.61s (Frame 2086)",
+      "flow": "172.30.0.1:443 → 172.16.1.101:54014"
+    },
+    {
+      "sid": 3000002,
+      "msg": "NetNerve Protocol Validation: SYN-FIN Detected",
+      "count": 1,
+      "first_seen": "+46.48s (Frame 2118)",
+      "flow": "150.171.110.209:443 → 172.16.1.101:54007"
+    }
+  ],
+  "filters": [
+    {
+      "expr": "dns.qry.name contains futupath.cyou",
+      "purpose": "All nine Lumma C2 domain lookups to the internal resolver",
+      "hits": 9
+    },
+    {
+      "expr": "http.request",
+      "purpose": "The thirteen C2 POSTs plus one OCSP GET",
+      "hits": 14
+    },
+    {
+      "expr": "ip.addr == 64.89.161.173",
+      "purpose": "Complete Lumma C2 conversation, including the 546 KB upload and payload download",
+      "hits": 1054
+    },
+    {
+      "expr": "tcp.port == 54254",
+      "purpose": "The multipart POST flow that triggered the command-injection heuristic",
+      "hits": 795
+    },
+    {
+      "expr": "ip.addr == 31.216.144.5",
+      "purpose": "TLS session carrying the mega.nz SNI",
+      "hits": 149
+    },
+    {
+      "expr": "tls.handshake.extensions_server_name",
+      "purpose": "All ClientHello SNI values — lure sites, MEGA, Microsoft and Google telemetry",
+      "hits": 77
+    },
+    {
+      "expr": "tcp.flags == 19",
+      "purpose": "SYN+FIN+ACK protocol-violation packets (two distinct alert rules)",
+      "hits": 6
+    }
+  ],
+  "iocs": {
+    "ips": [
+      {
+        "raw": "172.16.1.101",
+        "defanged": "172.16.1[.]101",
+        "role": "Compromised victim host"
+      },
+      {
+        "raw": "64.89.161.173",
+        "defanged": "64.89.161[.]173",
+        "role": "Lumma Stealer C2 (futupath.cyou, port 80)"
+      },
+      {
+        "raw": "31.216.144.5",
+        "defanged": "31.216.144[.]5",
+        "role": "TLS endpoint for mega.nz SNI"
+      },
+      {
+        "raw": "172.16.1.1",
+        "defanged": "172.16.1[.]1",
+        "role": "Internal DNS resolver used by the victim"
+      },
+      {
+        "raw": "172.30.0.1",
+        "defanged": "172.30.0[.]1",
+        "role": "Source of the first SYN-FIN protocol anomaly"
+      },
+      {
+        "raw": "150.171.110.209",
+        "defanged": "150.171.110[.]209",
+        "role": "Source of the second SYN-FIN protocol anomaly"
+      }
+    ],
+    "domains": [
+      {
+        "raw": "futupath.cyou",
+        "defanged": "futupath[.]cyou",
+        "role": "Lumma Stealer C2 domain (SID 2071487)"
+      },
+      {
+        "raw": "mega.nz",
+        "defanged": "mega[.]nz",
+        "role": "File-sharing service used for staging (DNS + TLS SNI)"
+      },
+      {
+        "raw": "na.static.mega.co.nz",
+        "defanged": "na.static.mega[.]co.nz",
+        "role": "MEGA static-content host"
+      },
+      {
+        "raw": "g.api.mega.co.nz",
+        "defanged": "g.api.mega[.]co.nz",
+        "role": "MEGA API endpoint"
+      },
+      {
+        "raw": "gfs270n071.userstorage.mega.co.nz",
+        "defanged": "gfs270n071.userstorage.mega[.]co.nz",
+        "role": "MEGA user-storage endpoint"
+      },
+      {
+        "raw": "freeprosoftzs.info",
+        "defanged": "freeprosoftzs[.]info",
+        "role": "Suspicious software/crack lure domain (first connection)"
+      },
+      {
+        "raw": "newlycrack.com",
+        "defanged": "newlycrack[.]com",
+        "role": "Crack-site lure domain"
+      },
+      {
+        "raw": "rupatch.com",
+        "defanged": "rupatch[.]com",
+        "role": "Crack/patch-site lure domain"
+      },
+      {
+        "raw": "pc4soft.com",
+        "defanged": "pc4soft[.]com",
+        "role": "Fake software lure domain"
+      },
+      {
+        "raw": "pcvision.org",
+        "defanged": "pcvision[.]org",
+        "role": "Fake software lure domain"
+      },
+      {
+        "raw": "applicationsformacos.co",
+        "defanged": "applicationsformacos[.]co",
+        "role": "Fake software lure domain"
+      }
+    ],
+    "urls": [
+      {
+        "raw": "http://futupath.cyou/",
+        "defanged": "hxxp://futupath[.]cyou/",
+        "role": "Lumma C2 POST endpoint (13 requests)"
+      }
+    ]
+  }
+}

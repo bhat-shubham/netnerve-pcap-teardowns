@@ -1,0 +1,230 @@
+{
+  "slug": "emotet-epoch4-infection",
+  "title": "Emotet Epoch 4 PCAP Analysis: JooSee.dll Download, Dridex C2 and Spambot Traffic",
+  "source_url": "https://www.malware-traffic-analysis.net/2022/02/08/index.html",
+  "suricata": [
+    {
+      "sid": 2035000,
+      "msg": "ET MALWARE PowerShell Script Downloading Emotet DLL",
+      "count": 1,
+      "first_seen": "+2.74s (Frame 16)",
+      "flow": "91.240.118.172:80 → 10.2.8.102:49736"
+    },
+    {
+      "sid": 2018959,
+      "msg": "ET INFO PE EXE or DLL Windows file download HTTP",
+      "count": 1,
+      "first_seen": "+104.47s (Frame 517)",
+      "flow": "66.175.58.9:80 → 10.2.8.102:49740"
+    },
+    {
+      "sid": 2016538,
+      "msg": "ET INFO Executable Retrieved With Minimal HTTP Headers - Potential Second Stage Download",
+      "count": 1,
+      "first_seen": "+104.47s (Frame 517)",
+      "flow": "66.175.58.9:80 → 10.2.8.102:49740"
+    },
+    {
+      "sid": 2014520,
+      "msg": "ET INFO EXE - Served Attached HTTP",
+      "count": 1,
+      "first_seen": "+104.47s (Frame 517)",
+      "flow": "66.175.58.9:80 → 10.2.8.102:49740"
+    },
+    {
+      "sid": 2400016,
+      "msg": "ET DROP Spamhaus DROP Listed Traffic Inbound group 17",
+      "count": 1,
+      "first_seen": "Early capture (Frames 1-4)",
+      "flow": "91.240.118.172:80 → 10.2.8.102:49730"
+    },
+    {
+      "sid": 2028765,
+      "msg": "ET JA3 Hash - [Abuse.ch] Possible Dridex",
+      "count": 46,
+      "first_seen": "+117.17s (Frame 520)",
+      "flow": "10.2.8.102:49741 → 185.248.140.40:443"
+    },
+    {
+      "sid": 2028765,
+      "msg": "ET JA3 Hash - [Abuse.ch] Possible Dridex (second C2)",
+      "count": 17,
+      "first_seen": "+7473.56s (Frame 32836)",
+      "flow": "10.2.8.102:49867 → 69.64.62.4:8080"
+    },
+    {
+      "sid": 2028765,
+      "msg": "ET JA3 Hash - [Abuse.ch] Possible Dridex (third C2)",
+      "count": 9,
+      "first_seen": "+7589.80s (Frame 33225)",
+      "flow": "10.2.8.102:50111 → 51.68.138.110:8080"
+    },
+    {
+      "sid": 2028765,
+      "msg": "ET JA3 Hash - [Abuse.ch] Possible Dridex (multi-source)",
+      "count": 8,
+      "first_seen": "+7748.63s (Frame 40105)",
+      "flow": "Multiple sources → Multiple destinations"
+    },
+    {
+      "sid": 2062715,
+      "msg": "ET INFO Observed UA-CPU Header",
+      "count": 1,
+      "first_seen": "+0.38s (Frame 4)",
+      "flow": "10.2.8.102:49730 → 91.240.118.172:80"
+    },
+    {
+      "sid": 2031231,
+      "msg": "ET INFO Observed ZeroSSL SSL/TLS Certificate",
+      "count": 1,
+      "first_seen": "+7782.09s (Frame 41580)",
+      "flow": "103.169.21.110:587 → 10.2.8.102:50222"
+    },
+    {
+      "sid": 1000020,
+      "msg": "NetNerve XSS: Script tag detected",
+      "count": 1,
+      "first_seen": "+0.80s (Frame 7)",
+      "flow": "91.240.118.172:80 → 10.2.8.102:49730"
+    },
+    {
+      "sid": 1000041,
+      "msg": "NetNerve Path Traversal: Directory bypass (windows)",
+      "count": 1,
+      "first_seen": "+104.47s (Frame 517)",
+      "flow": "66.175.58.9:80 → 10.2.8.102:49740"
+    }
+  ],
+  "filters": [
+    {
+      "expr": "http.request",
+      "purpose": "All five HTTP requests — the two loader URLs, the two DLL URLs and one Windows Update check",
+      "hits": 5
+    },
+    {
+      "expr": "ip.addr == 91.240.118.172",
+      "purpose": "Complete Emotet stage-1 conversation: hh.html and the disguised PowerShell PNG",
+      "hits": 21
+    },
+    {
+      "expr": "ip.addr == 66.175.58.9",
+      "purpose": "DLL delivery traffic, including the 282 reassembled segments of JooSee.dll",
+      "hits": 423
+    },
+    {
+      "expr": "ip.addr == 185.248.140.40",
+      "purpose": "Primary Dridex C2 beaconing on port 443 (repeated short sessions)",
+      "hits": 8000
+    },
+    {
+      "expr": "tcp.port == 8080",
+      "purpose": "Dridex C2 on the two non-standard 8080 nodes (69.64.62.4 and 51.68.138.110)",
+      "hits": 22279
+    },
+    {
+      "expr": "tcp.port == 25 || tcp.port == 465 || tcp.port == 587",
+      "purpose": "Spambot phase: SMTP AUTH attempts and mail relay sessions",
+      "hits": 12024
+    },
+    {
+      "expr": "smtp",
+      "purpose": "SMTP-protocol frames only — base64 AUTH LOGIN, MAIL FROM, RCPT TO and DATA",
+      "hits": 666
+    }
+  ],
+  "iocs": {
+    "ips": [
+      {
+        "raw": "10.2.8.102",
+        "defanged": "10.2.8[.]102",
+        "role": "Compromised victim (public NAT 173.166.146[.]112)"
+      },
+      {
+        "raw": "91.240.118.172",
+        "defanged": "91.240.118[.]172",
+        "role": "Emotet Epoch 4 stage-1 loader (hh.html / hello.png)"
+      },
+      {
+        "raw": "66.175.58.9",
+        "defanged": "66.175.58[.]9",
+        "role": "Hosted the 377,856-byte Emotet DLL"
+      },
+      {
+        "raw": "185.248.140.40",
+        "defanged": "185.248.140[.]40",
+        "role": "Dridex C2 over TCP 443 (46 JA3 hits)"
+      },
+      {
+        "raw": "69.64.62.4",
+        "defanged": "69.64.62[.]4",
+        "role": "Dridex C2 over TCP 8080 (17 JA3 hits)"
+      },
+      {
+        "raw": "51.68.138.110",
+        "defanged": "51.68.138[.]110",
+        "role": "Dridex C2 over TCP 8080 (9 JA3 hits)"
+      },
+      {
+        "raw": "144.217.88.125",
+        "defanged": "144.217.88[.]125",
+        "role": "Dridex C2 over TCP 443"
+      },
+      {
+        "raw": "101.32.113.90",
+        "defanged": "101.32.113[.]90",
+        "role": "smtp.qq.com relay that accepted the bot's AUTH LOGIN"
+      },
+      {
+        "raw": "103.169.21.110",
+        "defanged": "103.169.21[.]110",
+        "role": "SMTP relay with ZeroSSL certificate (SID 2031231)"
+      }
+    ],
+    "domains": [
+      {
+        "raw": "ttisecurity.com",
+        "defanged": "ttisecurity[.]com",
+        "role": "Emotet DLL URL in the PowerShell script (first URL)"
+      },
+      {
+        "raw": "tonysommers.net",
+        "defanged": "tonysommers[.]net",
+        "role": "Emotet DLL URL that delivered JooSee.dll"
+      },
+      {
+        "raw": "internationalstrategy.org",
+        "defanged": "internationalstrategy[.]org",
+        "role": "Third hardcoded DLL URL in the dropper script"
+      }
+    ],
+    "urls": [
+      {
+        "raw": "http://91.240.118.172/hh/hh.html",
+        "defanged": "hxxp://91.240.118[.]172/hh/hh.html",
+        "role": "Emotet Epoch 4 landing page (frame 4)"
+      },
+      {
+        "raw": "http://91.240.118.172/hh/hello.png",
+        "defanged": "hxxp://91.240.118[.]172/hh/hello.png",
+        "role": "PowerShell downloader disguised as PNG (frame 13)"
+      },
+      {
+        "raw": "http://ttisecurity.com/cgi/7RFeiqkgymCs/",
+        "defanged": "hxxp://ttisecurity[.]com/cgi/7RFeiqkgymCs/",
+        "role": "First DLL download URL (frame 23)"
+      },
+      {
+        "raw": "http://tonysommers.net/eln-images/BowlvMV7raSyx8l/",
+        "defanged": "hxxp://tonysommers[.]net/eln-images/BowlvMV7raSyx8l/",
+        "role": "Successful DLL download URL (frame 109)"
+      }
+    ],
+    "hashes": [
+      {
+        "raw": "2fe031c18972a7575529e516f21e5149c52162f27643d627bfdaa4091cfcb79c",
+        "defanged": "2fe031c18972a7575529e516f21e5149c52162f27643d627bfdaa4091cfcb79c",
+        "role": "SHA-256 of JooSee.dll / gfbzhbliguxkomh.voj (MTA notes)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "slug": "wannacry-ms17-010",
+  "title": "WannaCry EternalBlue SMBv1 PCAP Analysis: MS17-010 Exploit, DoublePulsar and Killswitch",
+  "source_url": "https://www.malware-traffic-analysis.net/2017/05/18/index2.html",
+  "suricata": [
+    {
+      "sid": 2024218,
+      "msg": "ET EXPLOIT Possible ETERNALBLUE MS17-010 (SMB Trans2 Secondary Buffer Overflow)",
+      "count": 88,
+      "first_seen": "+362.43s (Frame 1,389)",
+      "flow": "192.168.116.149:49215 → 192.168.116.138:445"
+    },
+    {
+      "sid": 2024217,
+      "msg": "ET EXPLOIT DoublePulsar SMB Backdoor Ping Detected (Mid 65)",
+      "count": 54,
+      "first_seen": "+359.31s (Frame 1,251)",
+      "flow": "192.168.116.149:49216 → 192.168.116.138:445"
+    }
+  ],
+  "filters": [
+    {
+      "expr": "tcp.port == 445",
+      "purpose": "Isolates all SMB session setup and payload transfer traffic",
+      "hits": 43283
+    },
+    {
+      "expr": "smb.cmd == 0x32",
+      "purpose": "Matches SMB Transaction2 primary request frames used in exploit setup",
+      "hits": 15577
+    },
+    {
+      "expr": "smb.cmd == 0x33",
+      "purpose": "Finds MS17-010 EternalBlue Trans2 Secondary buffer overflow trigger frames",
+      "hits": 88
+    },
+    {
+      "expr": "smb.mid == 65",
+      "purpose": "Pinpoints DoublePulsar ring-0 kernel implant probe and verification pings",
+      "hits": 54
+    },
+    {
+      "expr": "ip.addr == 192.168.116.149 && ip.addr == 192.168.116.138 && tcp.port == 445",
+      "purpose": "Filters complete bilateral exploit conversation between initial attacker and primary victim",
+      "hits": 14384
+    }
+  ],
+  "iocs": {
+    "ips": [
+      {
+        "raw": "192.168.116.149",
+        "defanged": "192.168.116[.]149",
+        "role": "Initial Infected Patient-Zero / Attacker"
+      },
+      {
+        "raw": "192.168.116.138",
+        "defanged": "192.168.116[.]138",
+        "role": "Compromised Victim #1 (Worm Replicator)"
+      },
+      {
+        "raw": "192.168.116.172",
+        "defanged": "192.168.116[.]172",
+        "role": "Targeted Victim #2"
+      },
+      {
+        "raw": "192.168.116.143",
+        "defanged": "192.168.116[.]143",
+        "role": "Targeted Victim #3"
+      }
+    ],
+    "domains": [
+      {
+        "raw": "www.iuqerfsodp9ifjaposdfjhgosurfaewrwergwea.com",
+        "defanged": "www.iuqerfsodp9ifjaposdfjhgosurfaewrwergwea[.]com",
+        "role": "WannaCry Killswitch Domain (Sinkholed by Marcus Hutchins on May 12, 2017)"
+      }
+    ],
+    "smb_paths": [
+      {
+        "raw": "\\\\192.168.116.138\\IPC$",
+        "defanged": "\\\\192.168.116[.]138\\IPC$",
+        "role": "IPC Named Pipe for Exploit Staging"
+      },
+      {
+        "raw": "\\\\192.168.116.172\\IPC$",
+        "defanged": "\\\\192.168.116[.]172\\IPC$",
+        "role": "IPC Named Pipe for Exploit Staging"
+      }
+    ]
+  }
+}

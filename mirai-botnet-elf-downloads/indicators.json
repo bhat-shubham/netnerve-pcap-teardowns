@@ -1,0 +1,254 @@
+{
+  "slug": "mirai-botnet-elf-downloads",
+  "title": "Mirai Botnet PCAP Analysis: /jaws Dropper, Multi-Architecture ELF Downloads and Telnet Scanning",
+  "source_url": "https://www.malware-traffic-analysis.net/2025/12/17/index.html",
+  "suricata": [
+    {
+      "sid": 2019240,
+      "msg": "ET INFO Executable and linking format (ELF) file download Over HTTP",
+      "count": 5,
+      "first_seen": "+17.86s (Frame 73)",
+      "flow": "158.94.210.88:80 → 10.12.17.101:*"
+    },
+    {
+      "sid": 2034567,
+      "msg": "ET HUNTING curl User-Agent to Dotted Quad",
+      "count": 3,
+      "first_seen": "+18.08s (Frame 82)",
+      "flow": "10.12.17.101:55588 → 158.94.210.88:80"
+    },
+    {
+      "sid": 2025126,
+      "msg": "ET INFO x86 File Download Request from IP Address",
+      "count": 2,
+      "first_seen": "+17.16s (Frame 18)",
+      "flow": "10.12.17.101:55586 → 158.94.210.88:80"
+    },
+    {
+      "sid": 2032924,
+      "msg": "ET HUNTING Suspicious GET Request for .x86",
+      "count": 2,
+      "first_seen": "+17.16s (Frame 18)",
+      "flow": "10.12.17.101:55586 → 158.94.210.88:80"
+    },
+    {
+      "sid": 2014169,
+      "msg": "ET DNS Query for .su TLD (Soviet Union) Often Malware Related",
+      "count": 2,
+      "first_seen": "+18.68s (Frame 149)",
+      "flow": "10.12.17.101:53900 → 8.8.8.8:53"
+    },
+    {
+      "sid": 2025123,
+      "msg": "ET INFO MIPS File Download Request from IP Address",
+      "count": 2,
+      "first_seen": "+18.92s (Frame 873)",
+      "flow": "10.12.17.101:55600 → 158.94.210.88:80"
+    },
+    {
+      "sid": 2400032,
+      "msg": "ET DROP Spamhaus DROP Listed Traffic Inbound group 33",
+      "count": 2,
+      "first_seen": "+0.57s (Frame 6)",
+      "flow": "158.94.210.88:80 → 10.12.17.101:58400 / 155.73.245.108:23 → :52999"
+    },
+    {
+      "sid": 2400028,
+      "msg": "ET DROP Spamhaus DROP Listed Traffic Inbound group 29",
+      "count": 1,
+      "first_seen": "+18.7s",
+      "flow": "136.230.80.79:23 → 10.12.17.101:52999"
+    },
+    {
+      "sid": 2400025,
+      "msg": "ET DROP Spamhaus DROP Listed Traffic Inbound group 26",
+      "count": 1,
+      "first_seen": "+18.7s",
+      "flow": "112.142.12.71:23 → 10.12.17.101:52999"
+    },
+    {
+      "sid": 2400058,
+      "msg": "ET DROP Spamhaus DROP Listed Traffic Inbound group 59",
+      "count": 1,
+      "first_seen": "+18.7s",
+      "flow": "204.56.28.230:23 → 10.12.17.101:51142"
+    },
+    {
+      "sid": 2400036,
+      "msg": "ET DROP Spamhaus DROP Listed Traffic Inbound group 37",
+      "count": 2,
+      "first_seen": "+18.7s",
+      "flow": "168.206.115.159:23 / 169.129.36.37:23 → 10.12.17.101:*"
+    },
+    {
+      "sid": 2400030,
+      "msg": "ET DROP Spamhaus DROP Listed Traffic Inbound group 31",
+      "count": 2,
+      "first_seen": "+18.7s",
+      "flow": "145.231.80.197:23 / 145.231.54.66:23 → 10.12.17.101:*"
+    },
+    {
+      "sid": 2400004,
+      "msg": "ET DROP Spamhaus DROP Listed Traffic Inbound group 5",
+      "count": 3,
+      "first_seen": "+18.7s",
+      "flow": "42.132.187.61 / 42.0.202.170 / 42.212.113.210 :23 → 10.12.17.101:*"
+    },
+    {
+      "sid": 2400033,
+      "msg": "ET DROP Spamhaus DROP Listed Traffic Inbound group 34",
+      "count": 1,
+      "first_seen": "+18.7s",
+      "flow": "160.122.102.95:23 → 10.12.17.101:52999"
+    },
+    {
+      "sid": 2400034,
+      "msg": "ET DROP Spamhaus DROP Listed Traffic Inbound group 35",
+      "count": 1,
+      "first_seen": "+18.7s",
+      "flow": "167.87.27.108:23 → 10.12.17.101:52999"
+    },
+    {
+      "sid": 2400067,
+      "msg": "ET DROP Spamhaus DROP Listed Traffic Inbound group 68",
+      "count": 1,
+      "first_seen": "+18.7s",
+      "flow": "209.95.197.217:23 → 10.12.17.101:52999"
+    },
+    {
+      "sid": 2400051,
+      "msg": "ET DROP Spamhaus DROP Listed Traffic Inbound group 52",
+      "count": 1,
+      "first_seen": "+18.7s",
+      "flow": "198.196.173.233:23 → 10.12.17.101:52999"
+    },
+    {
+      "sid": 2400056,
+      "msg": "ET DROP Spamhaus DROP Listed Traffic Inbound group 57",
+      "count": 1,
+      "first_seen": "+18.7s",
+      "flow": "202.61.185.149:23 → 10.12.17.101:52999"
+    },
+    {
+      "sid": 2400003,
+      "msg": "ET DROP Spamhaus DROP Listed Traffic Inbound group 4",
+      "count": 1,
+      "first_seen": "+18.7s",
+      "flow": "36.119.201.33:23 → 10.12.17.101:52999"
+    },
+    {
+      "sid": 2400031,
+      "msg": "ET DROP Spamhaus DROP Listed Traffic Inbound group 32",
+      "count": 1,
+      "first_seen": "+18.7s",
+      "flow": "153.14.76.42:23 → 10.12.17.101:52999"
+    },
+    {
+      "sid": 1000030,
+      "msg": "NetNerve Command Injection: Shell Execution command",
+      "count": 1,
+      "first_seen": "+0.57s (Frame 6)",
+      "flow": "158.94.210.88:80 → 10.12.17.101:58400"
+    }
+  ],
+  "filters": [
+    {
+      "expr": "http.request",
+      "purpose": "The /jaws dropper plus seven architecture-specific binary requests",
+      "hits": 8
+    },
+    {
+      "expr": "ip.addr == 158.94.210.88",
+      "purpose": "All dropper and ELF delivery traffic from the Mirai download host",
+      "hits": 1402
+    },
+    {
+      "expr": "tcp.port == 58400",
+      "purpose": "The initial /jaws connection and bash-script response",
+      "hits": 14
+    },
+    {
+      "expr": "tcp.port == 23",
+      "purpose": "Mass Telnet scanning and the Spamhaus-listed responses from scanned hosts",
+      "hits": 63424
+    },
+    {
+      "expr": "tcp.port == 37215",
+      "purpose": "Huawei Home Gateway RPC exploitation sweep",
+      "hits": 53271
+    },
+    {
+      "expr": "dns.qry.name contains cnc.504.su",
+      "purpose": "C2 domain queries and responses to 8.8.8.8",
+      "hits": 4
+    },
+    {
+      "expr": "http.response",
+      "purpose": "Five ELF downloads and the /jaws shell script",
+      "hits": 5
+    }
+  ],
+  "iocs": {
+    "ips": [
+      {
+        "raw": "10.12.17.101",
+        "defanged": "10.12.17[.]101",
+        "role": "Compromised host running the Mirai dropper and scanners"
+      },
+      {
+        "raw": "158.94.210.88",
+        "defanged": "158.94.210[.]88",
+        "role": "Mirai payload host (Apache/2.4.6, port 80)"
+      },
+      {
+        "raw": "8.8.8.8",
+        "defanged": "8.8.8[.]8",
+        "role": "Resolver used for the cnc.504.su lookup"
+      },
+      {
+        "raw": "155.73.245.108",
+        "defanged": "155.73.245[.]108",
+        "role": "Spamhaus-listed host responding from TCP/23"
+      },
+      {
+        "raw": "136.230.80.79",
+        "defanged": "136.230.80[.]79",
+        "role": "Spamhaus-listed host responding from TCP/23"
+      },
+      {
+        "raw": "42.132.187.61",
+        "defanged": "42.132.187[.]61",
+        "role": "Spamhaus-listed host responding from TCP/23"
+      }
+    ],
+    "domains": [
+      {
+        "raw": "cnc.504.su",
+        "defanged": "cnc.504[.]su",
+        "role": "Mirai C2 domain on the .su TLD (SID 2014169)"
+      }
+    ],
+    "urls": [
+      {
+        "raw": "http://158.94.210.88/jaws",
+        "defanged": "hxxp://158.94.210[.]88/jaws",
+        "role": "Bash dropper fetched at frame 4"
+      },
+      {
+        "raw": "http://158.94.210.88/596a96cc7bf9108cd896f33c44aedc8a/db0fa4b8db0333367e9bda3ab68b8042.x86",
+        "defanged": "hxxp://158.94.210[.]88/596a96cc7bf9108cd896f33c44aedc8a/db0fa4b8db0333367e9bda3ab68b8042.x86",
+        "role": "x86 Mirai bot binary (66,544 bytes)"
+      },
+      {
+        "raw": "http://158.94.210.88/596a96cc7bf9108cd896f33c44aedc8a/db0fa4b8db0333367e9bda3ab68b8042.mips",
+        "defanged": "hxxp://158.94.210[.]88/596a96cc7bf9108cd896f33c44aedc8a/db0fa4b8db0333367e9bda3ab68b8042.mips",
+        "role": "MIPS Mirai bot binary (96,408 bytes)"
+      },
+      {
+        "raw": "http://158.94.210.88/596a96cc7bf9108cd896f33c44aedc8a/db0fa4b8db0333367e9bda3ab68b8042.mpsl",
+        "defanged": "hxxp://158.94.210[.]88/596a96cc7bf9108cd896f33c44aedc8a/db0fa4b8db0333367e9bda3ab68b8042.mpsl",
+        "role": "MIPSEL Mirai bot binary (97,224 bytes)"
+      }
+    ]
+  }
+}

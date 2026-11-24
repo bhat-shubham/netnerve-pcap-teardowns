@@ -1,0 +1,157 @@
+{
+  "slug": "cobalt-strike-beaconing",
+  "title": "TA551 Trickbot with Cobalt Strike PCAP Analysis: Maldoc Delivery, Trickbot Spooling & Cobalt Strike Beaconing",
+  "source_url": "https://www.malware-traffic-analysis.net/2021/06/30/index.html",
+  "suricata": [
+    {
+      "sid": 2028885,
+      "msg": "ET TROJAN Cobalt Strike Malleable C2 HTTPS Beaconing Activity",
+      "count": 24,
+      "first_seen": "+9678.05s (Frame 67,591)",
+      "flow": "172.16.3.130:49458 → 185.25.49.246:443"
+    },
+    {
+      "sid": 2033012,
+      "msg": "ET TROJAN Observed Cobalt Strike Stager Download (105.dll)",
+      "count": 2,
+      "first_seen": "+8449.47s (Frame 64,927)",
+      "flow": "172.16.3.130:49441 → 176.10.125.8:80"
+    },
+    {
+      "sid": 2025348,
+      "msg": "ET TROJAN Trickbot Check-in Request (zev2)",
+      "count": 4,
+      "first_seen": "+308.02s (Frame 2,363)",
+      "flow": "172.16.3.130:49211 → 12.23.113.92:443"
+    },
+    {
+      "sid": 2029918,
+      "msg": "ET TROJAN TA551 Word Document Macro Payload Request",
+      "count": 1,
+      "first_seen": "+54.23s (Frame 730)",
+      "flow": "172.16.3.130:49202 → 45.84.0.215:80"
+    },
+    {
+      "sid": 2013028,
+      "msg": "ET POLICY Outbound External IP Lookup via ident.me",
+      "count": 2,
+      "first_seen": "+82.01s (Frame 1,189)",
+      "flow": "172.16.3.130:49204 → 176.58.123.25:80"
+    }
+  ],
+  "filters": [
+    {
+      "expr": "ip.addr == 172.241.27.226",
+      "purpose": "Exposes high-volume Trickbot botnet synchronization and spam relay traffic",
+      "hits": 53858
+    },
+    {
+      "expr": "ip.addr == 185.25.49.246 && tcp.port == 443",
+      "purpose": "Isolates all Cobalt Strike HTTPS C2 beacon sessions and operator interaction",
+      "hits": 2286
+    },
+    {
+      "expr": "dns.qry.name contains \"barionexis.top\" or dns.qry.name contains \"groupbzs.com\"",
+      "purpose": "Tracks fast-flux domain name lookups utilized by Trickbot infrastructure",
+      "hits": 134
+    },
+    {
+      "expr": "ip.addr == 12.23.113.92 && tcp.port == 443",
+      "purpose": "Filters all session check-ins to the active Trickbot controller",
+      "hits": 55
+    },
+    {
+      "expr": "ip.addr == 176.10.125.8",
+      "purpose": "Filters communications with the Cobalt Strike payload staging server",
+      "hits": 46
+    },
+    {
+      "expr": "http.request.method == \"POST\" && http.request.uri contains \"zev2\"",
+      "purpose": "Pinpoints Trickbot group tag zev2 bot check-ins and module staging requests",
+      "hits": 4
+    },
+    {
+      "expr": "http.request.uri contains \"testmahoneyd\" or http.host contains \"testmahoneyd\"",
+      "purpose": "Inspects TA551 maldoc initial payload retrieval and query strings",
+      "hits": 3
+    },
+    {
+      "expr": "http.request.uri contains \"105.dll\"",
+      "purpose": "Isolates Cobalt Strike Beacon payload DLL download from staging host",
+      "hits": 2
+    }
+  ],
+  "iocs": {
+    "ips": [
+      {
+        "raw": "185.25.49.246",
+        "defanged": "185.25.49[.]246",
+        "role": "Cobalt Strike TeamServer C2 (:443)"
+      },
+      {
+        "raw": "176.10.125.8",
+        "defanged": "176.10.125[.]8",
+        "role": "Cobalt Strike Beacon DLL Staging Server (:80)"
+      },
+      {
+        "raw": "12.23.113.92",
+        "defanged": "12.23.113[.]92",
+        "role": "Trickbot C2 Controller (:443)"
+      },
+      {
+        "raw": "45.84.0.215",
+        "defanged": "45.84.0[.]215",
+        "role": "TA551 Maldoc Web Delivery Host (:80)"
+      },
+      {
+        "raw": "172.241.27.226",
+        "defanged": "172.241.27[.]226",
+        "role": "Trickbot Botnet Relay / Sync Node"
+      },
+      {
+        "raw": "172.16.3.130",
+        "defanged": "172.16.3[.]130",
+        "role": "Compromised Enterprise Workstation (DESKTOP-P2PKG5O)"
+      }
+    ],
+    "domains": [
+      {
+        "raw": "testmahoneyd.com",
+        "defanged": "testmahoneyd[.]com",
+        "role": "TA551 Maldoc Delivery Domain"
+      },
+      {
+        "raw": "barionexis.top",
+        "defanged": "barionexis[.]top",
+        "role": "Secondary Trickbot Fast-Flux Domain"
+      },
+      {
+        "raw": "groupbzs.com",
+        "defanged": "groupbzs[.]com",
+        "role": "Trickbot Fast-Flux Domain"
+      },
+      {
+        "raw": "ident.me",
+        "defanged": "ident[.]me",
+        "role": "External IP Check Utility"
+      }
+    ],
+    "http_endpoints": [
+      {
+        "raw": "/105.dll",
+        "defanged": "/105[.]dll",
+        "role": "Cobalt Strike Beacon DLL Payload URI"
+      },
+      {
+        "raw": "/zev2/DESKTOP-P2PKG5O_W617601.33A937A521BA3C33604DF771B725295E/81/",
+        "defanged": "/zev2/DESKTOP-P2PKG5O_W617601[.]33A937A521BA3C33604DF771B725295E/81/",
+        "role": "Trickbot Bot Check-in Endpoint"
+      },
+      {
+        "raw": "/zev2/DESKTOP-P2PKG5O_W617601.33A937A521BA3C33604DF771B725295E/90",
+        "defanged": "/zev2/DESKTOP-P2PKG5O_W617601[.]33A937A521BA3C33604DF771B725295E/90",
+        "role": "Trickbot Module Request Endpoint"
+      }
+    ]
+  }
+}

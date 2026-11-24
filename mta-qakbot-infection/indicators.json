@@ -1,0 +1,142 @@
+{
+  "slug": "mta-qakbot-infection",
+  "title": "Brad Duncan MTA: Qakbot (Qbot) Infection Traffic Teardown",
+  "source_url": "https://www.malware-traffic-analysis.net/2022/10/14/index.html",
+  "suricata": [
+    {
+      "sid": 2034912,
+      "msg": "ET MALWARE Qakbot/Qbot TLS Certificate Detected (sxeuiqecowj.net)",
+      "count": 48,
+      "first_seen": "+52.64s (Frame 118)",
+      "flow": "10.10.14.101:49812 → 1.53.101.75:443"
+    },
+    {
+      "sid": 2034913,
+      "msg": "ET MALWARE Qakbot/Qbot Secondary C2 TLS Certificate (sageiaeuz.us)",
+      "count": 32,
+      "first_seen": "+184.20s (Frame 1,142)",
+      "flow": "10.10.14.101:49904 → 187.198.8.241:443"
+    },
+    {
+      "sid": 2027584,
+      "msg": "ET TROJAN Qakbot Direct IP HTTP/HTTPS Beacon Activity",
+      "count": 74,
+      "first_seen": "+53.11s (Frame 126)",
+      "flow": "10.10.14.101:49812 → 1.53.101.75:443"
+    },
+    {
+      "sid": 2013028,
+      "msg": "ET POLICY Suspicious Inbound Zip Archive over Plain HTTP",
+      "count": 33,
+      "first_seen": "+0.73s (Frame 23)",
+      "flow": "192.185.62.74:80 → 10.10.14.101:49888"
+    }
+  ],
+  "filters": [
+    {
+      "expr": "ip.addr == 1.53.101.75 && tcp.port == 443",
+      "purpose": "Isolates primary active C2 stream for session timing and payload volume verification",
+      "hits": 5426
+    },
+    {
+      "expr": "ip.addr == 187.198.8.241 && tcp.port == 443",
+      "purpose": "Isolates secondary failover C2 stream handling auxiliary module tasking",
+      "hits": 618
+    },
+    {
+      "expr": "ip.addr == 192.185.62.74",
+      "purpose": "Captures complete interaction with the malicious ZIP lure delivery server",
+      "hits": 446
+    },
+    {
+      "expr": "http.request or http.response",
+      "purpose": "Filters HTTP download of the initial lure ZIP archive and redirect headers",
+      "hits": 299
+    },
+    {
+      "expr": "tls.record.content_type == 23",
+      "purpose": "Pinpoints high-entropy encrypted TLS application data packets carrying C2 transactions",
+      "hits": 188
+    },
+    {
+      "expr": "tcp.flags.syn == 1 && tcp.flags.ack == 0",
+      "purpose": "Exposes rapid C2 proxy controller IP probing and scan cycles across dormant controllers",
+      "hits": 171
+    }
+  ],
+  "iocs": {
+    "ips": [
+      {
+        "raw": "192.185.62.74",
+        "defanged": "192.185.62[.]74",
+        "role": "Staging Web Server hosting malicious ZIP archive"
+      },
+      {
+        "raw": "1.53.101.75",
+        "defanged": "1.53.101[.]75",
+        "role": "Active Primary Qakbot C2 Controller (TLSv1.2 :443)"
+      },
+      {
+        "raw": "187.198.8.241",
+        "defanged": "187.198.8[.]241",
+        "role": "Active Secondary Qakbot C2 Controller (TLSv1.2 :443)"
+      },
+      {
+        "raw": "125.20.84.122",
+        "defanged": "125.20.84[.]122",
+        "role": "Unresponsive Tier-1 C2 Proxy Controller probed by bot"
+      },
+      {
+        "raw": "220.123.29.76",
+        "defanged": "220.123.29[.]76",
+        "role": "Unresponsive Tier-1 C2 Proxy Controller probed by bot"
+      },
+      {
+        "raw": "10.10.14.101",
+        "defanged": "10.10.14[.]101",
+        "role": "Compromised Victim Internal Workstation"
+      }
+    ],
+    "domains": [
+      {
+        "raw": "sapplus.net",
+        "defanged": "sapplus[.]net",
+        "role": "Malicious malspam redirect & lure delivery domain"
+      },
+      {
+        "raw": "sxeuiqecowj.net",
+        "defanged": "sxeuiqecowj[.]net",
+        "role": "Bogus X.509 Common Name on Primary C2 certificate"
+      },
+      {
+        "raw": "sageiaeuz.us",
+        "defanged": "sageiaeuz[.]us",
+        "role": "Bogus X.509 Common Name on Secondary C2 certificate"
+      }
+    ],
+    "urls": [
+      {
+        "raw": "http://sapplus.net/elii/pulemtaevtot",
+        "defanged": "hxxp://sapplus[.]net/elii/pulemtaevtot",
+        "role": "Malspam lure landing page"
+      },
+      {
+        "raw": "http://sapplus.net/elii/Orig1510220021.zip",
+        "defanged": "hxxp://sapplus[.]net/elii/Orig1510220021[.]zip",
+        "role": "Encrypted payload ZIP archive delivery"
+      }
+    ],
+    "certificates": [
+      {
+        "raw": "CN=sxeuiqecowj.net, O=Flibo Tdelirie Ouiopi LLC., L=Akfth, ST=AZ, C=GB",
+        "defanged": "CN=sxeuiqecowj[.]net, O=Flibo Tdelirie Ouiopi LLC., L=Akfth, ST=AZ, C=GB",
+        "role": "Primary C2 TLS Certificate Issuer Subject"
+      },
+      {
+        "raw": "CN=sageiaeuz.us, O=Oiumeicn Bteu Yphap Aenejfcom LLC., L=Otcsvjgcu Zsu, ST=QE, C=DE",
+        "defanged": "CN=sageiaeuz[.]us, O=Oiumeicn Bteu Yphap Aenejfcom LLC., L=Otcsvjgcu Zsu, ST=QE, C=DE",
+        "role": "Secondary C2 TLS Certificate Issuer Subject"
+      }
+    ]
+  }
+}
